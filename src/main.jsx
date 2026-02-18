@@ -6,6 +6,8 @@ import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthProvider";
 import { appRouter } from "./router";
 import { AppErrorBoundary } from "./shared/AppErrorBoundary";
+import { Toaster } from "sonner";
+
 import "./styles.css";
 
 const queryClient = new QueryClient({
@@ -26,6 +28,7 @@ createRoot(document.getElementById("root")).render(
           <AppErrorBoundary>
             <Suspense fallback={<p className="app-loading">Loading application...</p>}>
               <RouterProvider router={appRouter} />
+              
             </Suspense>
           </AppErrorBoundary>
         </QueryClientProvider>

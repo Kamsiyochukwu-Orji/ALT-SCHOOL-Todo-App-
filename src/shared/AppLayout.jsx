@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
+import { Toaster } from "sonner";
 
 export const AppLayout = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -78,6 +79,7 @@ export const AppLayout = () => {
       <main id="main-content" className="page-shell">
         <Outlet />
       </main>
+      <Toaster position="top-center" richColors />
     </>
   );
 };

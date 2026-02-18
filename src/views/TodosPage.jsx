@@ -18,6 +18,7 @@ import { Pagination } from "../components/Pagination";
 import { TodoFormModal } from "../components/TodoFormModal";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { Seo } from "../shared/Seo";
+import {toast} from 'sonner'
 
 const PAGE_SIZE = 10;
 const STATUS_FILTERS = ["all", "TODO", "IN_PROGRESS", "DONE", "CANCELLED"];
@@ -85,19 +86,22 @@ export default function TodosPage() {
   };
 
   const handleDelete = async () => {
-    if (!deletingTodo) {
-      return;
-    }
-
+    if (!deletingTodo) return;
+  
     const deletedId = deletingTodo.id;
-    await deleteTodoMutation.mutateAsync(deletedId);
-    setDeletingTodo(null);
-
-    if (todoId === deletedId) {
-      navigate(basePath);
+  
+    try {
+      await deleteTodoMutation.mutateAsync(deletedId);
+  
+      toast.success("Task deleted successfully"); 
+  
+      setDeletingTodo(null);
+  
+      if (todoId === deletedId) navigate(basePath);
+    } catch (error) {
+      toast.error("Failed to delete task"); 
     }
   };
-
   if (isLoading) {
     return (
       <section className="state-card" aria-live="polite">
