@@ -1,5 +1,5 @@
-
 :root {
+  --color-scheme: light;
   --bg: #f3f5f7;
   --card: #ffffff;
   --text: #18212f;
@@ -108,8 +108,8 @@ textarea:focus-visible {
 }
 
 .todos-layout {
-  display: grid;
-  gap: 1rem;
+  position: relative;
+  display: block;
 }
 
 .card {
@@ -120,8 +120,18 @@ textarea:focus-visible {
 }
 
 .card--details {
-  min-height: 250px;
+  position: fixed;
+  inset: 0;
+  background: var(--card);
+  z-index: 1000;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
   overflow-y: auto;
+  padding: 1rem;
+  min-height: 100vh;
+}
+.card--details.is-open {
+  transform: translateX(0);
 }
 
 .todos-header {
@@ -266,6 +276,7 @@ textarea:focus-visible {
   display: grid;
   place-items: center;
   padding: 1rem;
+  z-index: 2000;
 }
 
 .dialog {
@@ -348,10 +359,17 @@ textarea:focus-visible {
   }
 }
 
-/* Desktop */
 @media (min-width: 1024px) {
   .todos-layout {
+    display: grid;
     grid-template-columns: 1.4fr 1fr;
-    align-items: start;
+    gap: 1rem;
+  }
+
+  .card--details {
+    position: static;
+    transform: none;
+    z-index: auto;
+    min-height: auto;
   }
 }

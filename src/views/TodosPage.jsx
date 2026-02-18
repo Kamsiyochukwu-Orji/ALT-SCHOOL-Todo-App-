@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import {
   useCreateTodoMutation,
   useDeleteTodoMutation,
@@ -41,7 +47,12 @@ export default function TodosPage() {
     status: statusFilter,
     sort: "DESC",
   };
-  const { data: tasksResponse, isLoading, isError, error } = useTodosQuery(queryParams);
+  const {
+    data: tasksResponse,
+    isLoading,
+    isError,
+    error,
+  } = useTodosQuery(queryParams);
   const tasks = tasksResponse?.data ?? [];
   const meta = tasksResponse?.meta;
 
@@ -99,7 +110,10 @@ export default function TodosPage() {
   if (isError) {
     return (
       <section className="state-card" role="alert">
-        <Seo title="Todo list error" description="There was an error loading the todo list." />
+        <Seo
+          title="Todo list error"
+          description="There was an error loading the todo list."
+        />
         <h1>Could not load tasks</h1>
         <p>{error?.message ?? "Unknown API error."}</p>
       </section>
@@ -127,7 +141,11 @@ export default function TodosPage() {
               </Link>
             ) : null}
             {canManageTasks ? (
-              <button type="button" className="button button--primary" onClick={handleOpenCreate}>
+              <button
+                type="button"
+                className="button button--primary"
+                onClick={handleOpenCreate}
+              >
                 Add todo
               </button>
             ) : null}
@@ -179,10 +197,18 @@ export default function TodosPage() {
               const isSelected = todoId === todo.id;
 
               return (
-                <li key={todo.id} className={isSelected ? "todo-item todo-item--selected" : "todo-item"}>
+                <li
+                  key={todo.id}
+                  className={
+                    isSelected ? "todo-item todo-item--selected" : "todo-item"
+                  }
+                >
                   <article>
                     <h2>
-                      <Link to={`${basePath}/${todo.id}`} className="todo-item__link">
+                      <Link
+                        to={`${basePath}/${todo.id}`}
+                        className="todo-item__link"
+                      >
                         {todo.title}
                       </Link>
                     </h2>
@@ -199,7 +225,11 @@ export default function TodosPage() {
                           >
                             Edit
                           </button>
-                          <button type="button" className="button button--danger" onClick={() => setDeletingTodo(todo)}>
+                          <button
+                            type="button"
+                            className="button button--danger"
+                            onClick={() => setDeletingTodo(todo)}
+                          >
                             Delete
                           </button>
                         </>
@@ -211,10 +241,14 @@ export default function TodosPage() {
             })}
           </ul>
         )}
-        <Pagination currentPage={meta?.page ?? page} totalPages={meta?.totalPages ?? 1} onPageChange={setPage} />
+        <Pagination
+          currentPage={meta?.page ?? page}
+          totalPages={meta?.totalPages ?? 1}
+          onPageChange={setPage}
+        />
       </section>
 
-      <section className="card card--details">
+      <section className={`card card--details ${todoId ? "is-open" : ""}`}>
         {todoId ? (
           <Outlet context={{ onEdit: handleOpenEdit }} />
         ) : (
@@ -233,7 +267,9 @@ export default function TodosPage() {
           setEditingTodo(null);
         }}
         onSubmit={handleCreateOrEdit}
-        isSubmitting={createTodoMutation.isPending || updateTodoMutation.isPending}
+        isSubmitting={
+          createTodoMutation.isPending || updateTodoMutation.isPending
+        }
       />
 
       <ConfirmDialog
