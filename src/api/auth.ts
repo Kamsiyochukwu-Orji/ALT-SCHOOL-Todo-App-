@@ -1,21 +1,21 @@
 import { apiClient, tokenStorage } from "./client";
-
-export const login = async ({ email, password }) => {
-  const { data } = await apiClient.post("/auth/login", { email, password });
+import type {LoginPayload,RegisterPayload,AuthResponse,User} from '../types/auth'
+export const login = async ({ email, password }: LoginPayload):Promise<AuthResponse> => {
+  const { data } = await apiClient.post<AuthResponse>("/auth/login", { email, password });
   return data;
 };
 
-export const register = async ({ email, password, name }) => {
-  const { data } = await apiClient.post("/auth/register", { email, password, name });
+export const register = async ({ email, password, name }:RegisterPayload):Promise<AuthResponse> => {
+  const { data } = await apiClient.post<AuthResponse>("/auth/register", { email, password, name });
   return data;
 };
 
-export const getMe = async () => {
-  const { data } = await apiClient.get("/auth/me");
+export const getMe = async (): Promise<User> => {
+  const { data } = await apiClient.get<User>("/auth/me");
   return data;
 };
 
-export const persistAuthSession = (authResponse) => {
+export const persistAuthSession = (authResponse:AuthResponse | null) :User | null => {
   tokenStorage.setTokens({
     accessToken: authResponse?.accessToken,
     refreshToken: authResponse?.refreshToken,

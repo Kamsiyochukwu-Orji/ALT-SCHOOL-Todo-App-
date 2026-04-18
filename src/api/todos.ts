@@ -1,7 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "./client";
+import type {
+  Task,
+  TaskListResponse,
+  TaskMeta,
+  ListTodosParams,
+  UpdateTodoInput,
+} from "../types/task";
 
-const TASKS_QUERY_KEY = ["tasks"];
+
+
+const TASKS_QUERY_KEY = ["tasks"] as const;
 
 const DEFAULT_META = {
   total: 0,
@@ -12,7 +21,7 @@ const DEFAULT_META = {
   hasPreviousPage: false,
 };
 
-const normalizeTask = (task) => {
+const normalizeTask = (task: any): Task => {
   const status = String(task.status ?? "TODO");
   const priority = String(task.priority ?? "LOW");
 
@@ -38,12 +47,16 @@ const normalizeTask = (task) => {
   };
 };
 
-const normalizeListResponse = (responseData) => ({
-  data: Array.isArray(responseData?.data) ? responseData.data.map(normalizeTask) : [],
-  meta: responseData?.meta ? { ...DEFAULT_META, ...responseData.meta } : DEFAULT_META,
+const normalizeListResponse = (responseData: any): TaskListResponse => ({
+  data: Array.isArray(responseData?.data)
+    ? responseData.data.map(normalizeTask)
+    : [],
+  meta: responseData?.meta
+    ? { ...DEFAULT_META, ...responseData.meta }
+    : DEFAULT_META,
 });
 
-const emptyToNull = (value) => {
+const emptyToNull = (value: unknown): string | null => {
   if (value === undefined || value === null) {
     return null;
   }
@@ -52,10 +65,10 @@ const emptyToNull = (value) => {
     return null;
   }
 
-  return value;
+  return value as string;
 };
 
-const normalizeNumberField = (value) => {
+const normalizeNumberField = (value: unknown): number | null => {
   const normalized = emptyToNull(value);
   if (normalized === null) {
     return null;
@@ -65,14 +78,12 @@ const normalizeNumberField = (value) => {
   return Number.isNaN(parsed) ? null : parsed;
 };
 
-const toTaskPayload = (payload) => ({
+const toTaskPayload = (payload: any) => ({
   name: payload.title?.trim() ?? payload.name?.trim() ?? "",
   description: emptyToNull(payload.description?.trim()),
   status: payload.status ?? "TODO",
   priority: payload.priority ?? "LOW",
   archived: payload.archived ?? false,
-  // The API currently rejects date-only strings from form inputs for these fields.
-  // Send null instead of raw strings to avoid Zod invalid_type failures.
   start: null,
   end: null,
   duration: normalizeNumberField(payload.duration),
@@ -84,59 +95,69 @@ const toTaskPayload = (payload) => ({
   completedAt: null,
 });
 
-export const listTodos = async ({ page = 1, limit = 10, search = "", status = "all", sort = "DESC", all }) => {
-  const params = {
-    page,
-    limit,
-    sort,
-  };
+export const listTodos = async (
+  params: ListTodosParams = {}
+): Promise<TaskListResponse> => {
+  const {
+    page = 1,
+    limit = 10,
+    search = "",
+    status = "all",
+    sort = "DESC",
+    all,
+  } = params;
+
+  const queryParams: Record<string,unknown> = {page,limit,sort};
 
   if (typeof all === "boolean") {
-    params.all = all;
+  queryParams.all = all;
   }
 
   if (search.trim()) {
-    params.search = search.trim();
+    queryParams.search = search.trim();
   }
 
   if (status !== "all") {
-    params.status = status;
+    queryParams.status = status;
   }
 
-  const { data } = await apiClient.get("/tasks", { params });
+  const { data } = await apiClient.get("/tasks", { params: queryParams });
   return normalizeListResponse(data);
 };
 
-export const getTodoById = async (id) => {
+export const getTodoById = async (id:string):Promise<Task> => {
   const { data } = await apiClient.get(`/tasks/${id}`);
   return normalizeTask(data);
 };
 
-export const createTodo = async (payload) => {
+export const createTodo = async (payload:any):Promise<Task> => {
   const { data } = await apiClient.post("/tasks", toTaskPayload(payload));
   return normalizeTask(data);
 };
 
-export const updateTodo = async ({ id, payload }) => {
-  const { data } = await apiClient.patch(`/tasks/${id}`, toTaskPayload(payload));
+export const updateTodo = async ({ id, payload }: UpdateTodoInput): Promise<Task> => {
+  const { data } = await apiClient.patch(
+    `/tasks/${id}`,
+    toTaskPayload(payload)
+  );
   return normalizeTask(data);
 };
 
-export const deleteTodo = async (id) => {
+export const deleteTodo = async (id:string): Promise<string> => {
   await apiClient.delete(`/tasks/${id}`);
   return id;
 };
 
-export const useTodosQuery = (params) =>
+export const useTodosQuery = (params: ListTodosParams) =>
   useQuery({
     queryKey: [...TASKS_QUERY_KEY, params],
     queryFn: () => listTodos(params),
   });
 
-export const useTodoDetailsQuery = (todoId) => {
+export const useTodoDetailsQuery = (todoId:string ) => {
   return useQuery({
     queryKey: [...TASKS_QUERY_KEY, todoId],
-    queryFn: () => getTodoById(todoId),
+    queryFn: () => getTodoById(todoId as string),
     enabled: Boolean(todoId),
   });
 };
@@ -159,7 +180,9 @@ export const useUpdateTodoMutation = () => {
     mutationFn: updateTodo,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: TASKS_QUERY_KEY });
-      queryClient.invalidateQueries({ queryKey: [...TASKS_QUERY_KEY, variables.id] });
+      queryClient.invalidateQueries({
+        queryKey: [...TASKS_QUERY_KEY, variables.id],
+      });
     },
   });
 };

@@ -1,5 +1,5 @@
-import axios from "axios";
-
+import axios, {AxiosError,InternalAxiosRequestConfig} from "axios";
+import type {Tokens, RefreshResponse} from '../types/auth'
 const API_BASE_URL = "https://api.oluwasetemi.dev";
 const ACCESS_TOKEN_KEY = "altodo_access_token";
 const REFRESH_TOKEN_KEY = "altodo_refresh_token";
@@ -11,12 +11,12 @@ export const apiClient = axios.create({
   },
 });
 
-let activeRefreshPromise = null;
+let activeRefreshPromise: Promise<string> | null = null;
 
 export const tokenStorage = {
   getAccessToken: () => window.localStorage.getItem(ACCESS_TOKEN_KEY),
   getRefreshToken: () => window.localStorage.getItem(REFRESH_TOKEN_KEY),
-  setTokens: ({ accessToken, refreshToken }) => {
+  setTokens: ({ accessToken, refreshToken }: Tokens): void => {
     if (accessToken) {
       window.localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
       apiClient.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
