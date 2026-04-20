@@ -5,8 +5,8 @@ open: boolean;
 title: string;
 message: string;
 confirmText:string;
-onCancel: (event:MouseEvent<HTMLDivElement |HTMLButtonElement>)=>void;
-onConfirm: (event: MouseEvent<HTMLButtonElement>) => void;
+onCancel: ()=>void;
+onConfirm: () => void;
 isLoading?: boolean;
 }
 

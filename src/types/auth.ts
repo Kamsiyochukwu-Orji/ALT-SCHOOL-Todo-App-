@@ -30,11 +30,7 @@ export interface RefreshResponse{
     refreshToken: string;
 }
 
-export interface User{
-    id: string;
-    email: string;
-    name: string;
-}
+
 
 export interface AuthContextValue{
     user: User | null;
