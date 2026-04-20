@@ -29,3 +29,22 @@ export interface RefreshResponse{
     accessToken: string;
     refreshToken: string;
 }
+
+export interface User{
+    id: string;
+    email: string;
+    name: string;
+}
+
+export interface AuthContextValue{
+    user: User | null;
+    isAuthenticated: boolean;
+    isLoadingAuth: boolean;
+    loginWithEmail: (email: string, password: string)=>Promise<User | null>;
+    signupWithEmail:(
+        email:string,
+        password:string,
+        name: string
+    )=>Promise<User | null>;
+    logout: ()=> void;
+}

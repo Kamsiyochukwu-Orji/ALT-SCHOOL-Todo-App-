@@ -1,5 +1,30 @@
 import { useEffect, useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
+import type { Task } from "../types/task";
 
+interface TodoFormValues {
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  archived: boolean;
+  start: string;
+  end: string;
+  duration: string | number;
+  isDefault: string;
+  parentId: string;
+  children: string;
+  owner: string;
+  tags: string;
+  completedAt: string;
+}
+interface TodoFormModalProps {
+  open: boolean;
+  initialTodo?: Task | null;
+  onClose: () => void;
+  onSubmit: (data: Record<string, unknown>) => void;
+  isSubmitting?: boolean;
+}
 const EMPTY_FORM = {
   title: "",
   description: "",
@@ -19,15 +44,21 @@ const EMPTY_FORM = {
 
 const STATUS_OPTIONS = ["TODO", "IN_PROGRESS", "DONE", "CANCELLED"];
 const PRIORITY_OPTIONS = ["LOW", "MEDIUM", "HIGH"];
-const toDateInputValue = (value) => {
+const toDateInputValue = (value:unknown) => {
   if (!value) {
     return "";
   }
   return String(value).slice(0, 10);
 };
 
-export const TodoFormModal = ({ open, initialTodo, onClose, onSubmit, isSubmitting }) => {
-  const [formValues, setFormValues] = useState(EMPTY_FORM);
+export const TodoFormModal = ({
+  open,
+  initialTodo,
+  onClose,
+  onSubmit,
+  isSubmitting,
+}:TodoFormModalProps) => {
+  const [formValues, setFormValues] = useState<TodoFormValues>(EMPTY_FORM);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -45,7 +76,8 @@ export const TodoFormModal = ({ open, initialTodo, onClose, onSubmit, isSubmitti
         start: toDateInputValue(initialTodo.start),
         end: toDateInputValue(initialTodo.end),
         duration: initialTodo.duration ?? "",
-        isDefault: initialTodo.isDefault === null ? "" : String(initialTodo.isDefault),
+        isDefault:
+          initialTodo.isDefault === null ? "" : String(initialTodo.isDefault),
         parentId: initialTodo.parentId ?? "",
         children: initialTodo.children ?? "",
         owner: initialTodo.owner ?? "",
@@ -62,15 +94,22 @@ export const TodoFormModal = ({ open, initialTodo, onClose, onSubmit, isSubmitti
     return null;
   }
 
-  const handleChange = (event) => {
-    const { name, type, checked, value } = event.target;
+  const handleChange = (event:ChangeEvent<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>) => {
+    const { name, type } = event.target;
+
+    const value =
+      type === "checkbox"
+        ? (event.target as HTMLInputElement).checked
+        : event.target.value;
+
     setFormValues((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
+    
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event:FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!formValues.title.trim()) {
@@ -88,7 +127,8 @@ export const TodoFormModal = ({ open, initialTodo, onClose, onSubmit, isSubmitti
       start: formValues.start,
       end: formValues.end,
       duration: formValues.duration,
-      isDefault: formValues.isDefault === "" ? null : formValues.isDefault === "true",
+      isDefault:
+        formValues.isDefault === "" ? null : formValues.isDefault === "true",
       parentId: formValues.parentId,
       children: formValues.children,
       owner: formValues.owner,
@@ -106,7 +146,9 @@ export const TodoFormModal = ({ open, initialTodo, onClose, onSubmit, isSubmitti
         aria-labelledby="todo-dialog-heading"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 id="todo-dialog-heading">{initialTodo ? "Edit todo" : "Create todo"}</h2>
+        <h2 id="todo-dialog-heading">
+          {initialTodo ? "Edit todo" : "Create todo"}
+        </h2>
         <form className="form" onSubmit={handleSubmit}>
           <label className="form__label" htmlFor="todo-title">
             Title
@@ -164,7 +206,12 @@ export const TodoFormModal = ({ open, initialTodo, onClose, onSubmit, isSubmitti
             ))}
           </select>
           <label className="form__checkbox">
-            <input name="archived" type="checkbox" checked={formValues.archived} onChange={handleChange} />
+            <input
+              name="archived"
+              type="checkbox"
+              checked={formValues.archived}
+              onChange={handleChange}
+            />
             Archived
           </label>
           <label className="form__label" htmlFor="todo-start">
@@ -276,10 +323,18 @@ export const TodoFormModal = ({ open, initialTodo, onClose, onSubmit, isSubmitti
             </p>
           ) : null}
           <div className="dialog__actions">
-            <button type="button" className="button button--secondary" onClick={onClose}>
+            <button
+              type="button"
+              className="button button--secondary"
+              onClick={onClose}
+            >
               Cancel
             </button>
-            <button type="submit" className="button button--primary" disabled={isSubmitting}>
+            <button
+              type="submit"
+              className="button button--primary"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? "Saving..." : "Save"}
             </button>
           </div>

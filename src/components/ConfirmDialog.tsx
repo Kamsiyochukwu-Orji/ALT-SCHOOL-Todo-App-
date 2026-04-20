@@ -1,4 +1,16 @@
-export const ConfirmDialog = ({ open, title, message, confirmText, onCancel, onConfirm, isLoading }) => {
+import type {FC,MouseEvent} from 'react'
+
+interface ConfirmDialogProps{
+open: boolean;
+title: string;
+message: string;
+confirmText:string;
+onCancel: (event:MouseEvent<HTMLDivElement |HTMLButtonElement>)=>void;
+onConfirm: (event: MouseEvent<HTMLButtonElement>) => void;
+isLoading?: boolean;
+}
+
+export const ConfirmDialog: FC<ConfirmDialogProps> = ({ open, title, message, confirmText, onCancel, onConfirm, isLoading }) => {
   if (!open) {
     return null;
   }

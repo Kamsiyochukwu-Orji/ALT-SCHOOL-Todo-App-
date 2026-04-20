@@ -1,12 +1,17 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { getMe, login, persistAuthSession, register } from "../api/auth";
 import { tokenStorage } from "../api/client";
+import type {AuthContextValue, User} from '../types/auth'
+import type{ReactNode} from 'react'
 
-const AuthContext = createContext(null);
+interface AuthProviderProps{
+  children:ReactNode;
+}
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
 
   useEffect(() => {
     const bootstrapSession = async () => {
@@ -32,14 +37,14 @@ export const AuthProvider = ({ children }) => {
     bootstrapSession();
   }, []);
 
-  const loginWithEmail = async (email, password) => {
+  const loginWithEmail = async (email:string, password:string): Promise<User | null> => {
     const authResponse = await login({ email, password });
     const nextUser = persistAuthSession(authResponse);
     setUser(nextUser);
     return nextUser;
   };
 
-  const signupWithEmail = async (email, password, name) => {
+  const signupWithEmail = async (email:string, password:string, name:string):Promise<User | null> => {
     const authResponse = await register({ email, password, name });
     const nextUser = persistAuthSession(authResponse);
     setUser(nextUser);
