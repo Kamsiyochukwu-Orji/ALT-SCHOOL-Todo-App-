@@ -14,11 +14,12 @@ export const RouteErrorFallback = () => {
       </section>
     );
   }
+  const message = error instanceof Error ? error.message : 'Unknown route error.'
 
   return (
     <section className="state-card" role="alert">
       <h1>Route failed to load</h1>
-      <p>{error?.message ?? "Unknown route error."}</p>
+      <p>{message}</p>
       <Link to="/todos" className="button button--primary">
         Back to todos
       </Link>

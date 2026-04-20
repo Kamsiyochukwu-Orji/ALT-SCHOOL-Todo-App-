@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { Navigate, createBrowserRouter } from "react-router-dom";
+
 import { AppLayout } from "./shared/AppLayout";
 import { ProtectedRoute } from "./shared/ProtectedRoute";
 import { RouteErrorFallback } from "./shared/RouteErrorFallback";

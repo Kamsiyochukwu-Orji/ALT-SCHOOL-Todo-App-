@@ -17,8 +17,9 @@ const queryClient = new QueryClient({
     },
   },
 });
+const rootElement = document.getElementById('root') as HTMLElement
 
-createRoot(document.getElementById("root")).render(
+createRoot(rootElement).render(
   <StrictMode>
     <HelmetProvider>
       <AuthProvider>

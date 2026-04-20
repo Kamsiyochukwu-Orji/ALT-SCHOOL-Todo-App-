@@ -1,16 +1,28 @@
 import { Component } from "react";
+import type {ReactNode, ErrorInfo} from 'react'
 
-export class AppErrorBoundary extends Component {
-  constructor(props) {
+interface AppErrorBoundaryProps{
+  children: ReactNode;
+}
+
+interface AppErrorBoundaryState{
+  hasError: boolean;
+  error: Error | null;
+}
+
+
+
+export class AppErrorBoundary extends Component<AppErrorBoundaryProps,AppErrorBoundaryState> {
+  constructor(props:AppErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error): AppErrorBoundaryState {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error, info) {
+  componentDidCatch(error:Error, info:ErrorInfo):void {
     console.error("Unhandled application error:", error, info);
   }
 
