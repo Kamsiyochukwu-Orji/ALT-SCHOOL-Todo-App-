@@ -16,9 +16,12 @@ export const getMe = async (): Promise<User> => {
 };
 
 export const persistAuthSession = (authResponse:AuthResponse | null) :User | null => {
+  if(!authResponse){
+    return null
+  }
   tokenStorage.setTokens({
     accessToken: authResponse?.accessToken,
     refreshToken: authResponse?.refreshToken,
   });
-  return authResponse?.user ?? null;
+  return authResponse.user;
 };
