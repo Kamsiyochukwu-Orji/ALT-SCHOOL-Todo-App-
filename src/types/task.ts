@@ -5,8 +5,8 @@ export interface Task {
   id: string;
   title: string;
   description: string;
-  status: TaskStatus;
-  priority: TaskPriority;
+  status: TaskStatus | string;
+  priority: TaskPriority | string;
   completed: boolean;
   archived: boolean;
   start: string | null;
