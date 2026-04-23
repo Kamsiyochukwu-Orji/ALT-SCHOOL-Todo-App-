@@ -25,6 +25,7 @@ export const ConfirmDialog: FC<ConfirmDialogProps> = ({
 
   return (
     <div className="dialog-backdrop" role="presentation" onClick={(event)=>{
+      if(isLoading) return;
       if(event.target === event.currentTarget) onCancel();
     }}>
       <section
