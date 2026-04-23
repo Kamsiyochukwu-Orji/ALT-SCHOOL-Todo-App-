@@ -1,4 +1,4 @@
-import axios, {AxiosError,InternalAxiosRequestConfig} from "axios";
+import axios from "axios";
 import type {Tokens, RefreshResponse} from '../types/auth'
 const API_BASE_URL = "https://api.oluwasetemi.dev";
 const ACCESS_TOKEN_KEY = "altodo_access_token";
@@ -48,9 +48,9 @@ const refreshAccessToken = async () => {
   }
 
   activeRefreshPromise = axios
-    .post(`${API_BASE_URL}/auth/refresh`, { refreshToken })
+    .post<RefreshResponse>(`${API_BASE_URL}/auth/refresh`, { refreshToken })
     .then((response) => {
-      const nextTokens = response?.data ?? {};
+      const nextTokens = response.data
       tokenStorage.setTokens(nextTokens);
       return nextTokens.accessToken;
     })

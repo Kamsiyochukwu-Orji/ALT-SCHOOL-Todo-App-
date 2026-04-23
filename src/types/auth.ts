@@ -8,17 +8,18 @@ export interface RegisterPayload{
     password: string;
     name: string;
 }
+export interface User{
+    id: string;
+    email: string;
+    name: string;
+}
 
 export interface AuthResponse{
     accessToken: string;
     refreshToken: string;
     user: User;
 }
-export interface User{
-    id: string;
-    email: string;
-    name: string;
-}
+
 
 export interface Tokens {
     accessToken?: string;
