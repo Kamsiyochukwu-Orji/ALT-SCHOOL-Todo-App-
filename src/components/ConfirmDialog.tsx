@@ -24,15 +24,19 @@ export const ConfirmDialog: FC<ConfirmDialogProps> = ({
   }
 
   return (
-    <div className="dialog-backdrop" role="presentation" onClick={onCancel}>
+    <div className="dialog-backdrop" role="presentation" onClick={(event)=>{
+      if(event.target === event.currentTarget) onCancel();
+    }}>
       <section
         className="dialog"
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="confirm-dialog-heading"
+        aria-describedby = 'confirm-dialog-message'
+        onClick={(event)=>event.stopPropagation()}
       >
         <h2 id="confirm-dialog-heading">{title}</h2>
-        <p>{message}</p>
+        <p id="confirm-dialog-message">{message}</p>
         <div className="dialog__actions">
           <button
             type="button"
