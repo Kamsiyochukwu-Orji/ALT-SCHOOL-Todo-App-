@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext,useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { getMe, login, persistAuthSession, register } from "../api/auth";
 import { tokenStorage } from "../api/client";
 import type {AuthContextValue, User} from '../types/auth'
@@ -37,24 +37,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     bootstrapSession();
   }, []);
 
-  const loginWithEmail = async (email:string, password:string): Promise<User | null> => {
+  const loginWithEmail = useCallback(async(email:string, password:string): Promise<User | null> => {
     const authResponse = await login({ email, password });
     const nextUser = persistAuthSession(authResponse);
     setUser(nextUser);
     return nextUser;
-  };
+},[])
 
-  const signupWithEmail = async (email:string, password:string, name:string):Promise<User | null> => {
+  const signupWithEmail = useCallback(async (email:string, password:string, name:string):Promise<User | null> => {
     const authResponse = await register({ email, password, name });
     const nextUser = persistAuthSession(authResponse);
     setUser(nextUser);
     return nextUser;
-  };
+  },[]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     tokenStorage.clearTokens();
     setUser(null);
-  };
+  },[]);
 
   const value = useMemo(
     () => ({
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       signupWithEmail,
       logout,
     }),
-    [user, isLoadingAuth]
+    [user, isLoadingAuth,loginWithEmail,signupWithEmail,logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
