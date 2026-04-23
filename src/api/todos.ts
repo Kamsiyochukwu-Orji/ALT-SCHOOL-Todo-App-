@@ -3,7 +3,6 @@ import { apiClient } from "./client";
 import type {
   Task,
   TaskListResponse,
-  TaskMeta,
   ListTodosParams,
   UpdateTodoInput,
 } from "../types/task";
@@ -157,7 +156,7 @@ export const useTodosQuery = (params: ListTodosParams) =>
 export const useTodoDetailsQuery = (todoId:string ) => {
   return useQuery({
     queryKey: [...TASKS_QUERY_KEY, todoId],
-    queryFn: () => getTodoById(todoId as string),
+    queryFn: () => getTodoById(todoId),
     enabled: Boolean(todoId),
   });
 };

@@ -17,8 +17,10 @@ const queryClient = new QueryClient({
     },
   },
 });
-const rootElement = document.getElementById('root') as HTMLElement
-
+const rootElement = document.getElementById('root') 
+if(!rootElement){
+  throw new Error("Root element not found. Ensure index.html contains <div id=root></div>")
+}
 createRoot(rootElement).render(
   <StrictMode>
     <HelmetProvider>
